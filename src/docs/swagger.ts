@@ -1,7 +1,4 @@
-import swaggerUi from 'swagger-ui-express';
-import { Express } from 'express';
-
-const swaggerDocument = {
+export const swaggerDocs = {
   openapi: "3.0.0",
   info: {
     title: "TCG Store API",
@@ -39,8 +36,16 @@ const swaggerDocument = {
     },
     "/api/cards": {
       get: {
-        summary: "Lista todas as cartas",
+        summary: "Lista todas as cartas (com filtros opcionais)",
         security: [{ bearerAuth: [] }],
+        parameters: [
+          { in: "query", name: "name", schema: { type: "string" }, description: "Parte do nome (sem diferenciar maiúsculas)" },
+          { in: "query", name: "expansion", schema: { type: "string" }, description: "Coleção exata" },
+          { in: "query", name: "rarity", schema: { type: "string" }, description: "Raridade exata" },
+          { in: "query", name: "minPrice", schema: { type: "number" }, description: "Preço mínimo" },
+          { in: "query", name: "maxPrice", schema: { type: "number" }, description: "Preço máximo" },
+          { in: "query", name: "inStock", schema: { type: "boolean" }, description: "true = só com estoque; false = só esgotadas" }
+        ],
         responses: { "200": { description: "Sucesso" } }
       },
       post: {
@@ -105,8 +110,4 @@ const swaggerDocument = {
       }
     }
   }
-};
-
-export const setupSwagger = (app: Express) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 };
